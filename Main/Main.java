@@ -19,10 +19,11 @@ public class Main {
 
     }
 
+
     // 显示登陆界面
     private static void logIn() {
         System.out.println("=========================================");
-        System.out.println("     Monash Pation Management System     ");
+        System.out.println("     Monash Patient Management System     ");
         System.out.println("=========================================");
         System.out.println("   ***Please enter user credentials***   ");
         System.out.println("      ");
@@ -47,7 +48,11 @@ public class Main {
             System.out.println();
             mainScreen();
         }
+
     }
+
+
+
 
     //显示主界面
     private static void mainScreen() {
@@ -65,6 +70,9 @@ public class Main {
         System.out.println();
         System.out.println("Please make a choice: ");
     }
+
+    // 要用户输入选择 然后验证一下选择,返回用户选择
+
 
 
     //主界面的选项 1 显示所有的诊所
