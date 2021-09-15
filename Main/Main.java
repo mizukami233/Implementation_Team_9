@@ -34,18 +34,37 @@ public class Main {
         Scanner sc2 = new Scanner(System.in);
         String password = sc2.nextLine();
 
+        //检查输入的邮箱密码正确与否
         boolean isValid = checkIsValid(email, password);
-        if(isValid == false){
+        if(isValid == false) {
+            //验证失败 登陆失败 提醒失败 再次要求登陆账户密码
             System.out.println(" -Incorrect account password!");
         }
 
-
-        //验证邮箱密码是不是正确的 需要开一个方法写验证
-        //       验证失败 登陆失败 提醒失败 再次要求登陆账户密码，要写个循环
-        //       验证成功 登陆成功进入 提醒成功 并进入主界面
-        //                 显示主界面
+        else {
+            //如果正确进入主程序，提醒成功
+            System.out.println(" -Login Success!");
+            System.out.println();
+            mainScreen();
+        }
     }
 
+    //显示主界面
+    private static void mainScreen() {
+        System.out.println("=========================================");
+        System.out.println("          Appointment Management         ");
+        System.out.println("=========================================");
+        System.out.println();
+        System.out.println();
+        System.out.println("       ***Please Make a Choice***        ");
+        System.out.println("1. Display Branches");
+        System.out.println();
+        System.out.println("2. Manage Appointment");
+        System.out.println();
+        System.out.println("3. Log out");
+        System.out.println();
+        System.out.println("Please make a choice: ");
+    }
 
 
     //主界面的选项 1 显示所有的诊所
