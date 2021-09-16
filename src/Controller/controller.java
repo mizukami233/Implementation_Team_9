@@ -92,11 +92,11 @@ public class controller {
                 str = str.trim();
                 String [] splitBList = str.split(",");
                 Branches br = new Branches();
-                br.setId(splitBList[0]);
+                br.setId(Integer.parseInt(splitBList[0]));
                 br.setName(splitBList[1]);
-                br.setPostcode(splitBList[2]);
+                br.setPostcode(Integer.parseInt(splitBList[2]));
                 br.setOpningHour(splitBList[3]);
-                br.setPhone(splitBList[4]);
+                br.setPhone(Integer.parseInt(splitBList[4]));
                 br.setStreetName(splitBList[5]);
                 br.setSuburb(splitBList[6]);
                 branches.add(br);
