@@ -28,30 +28,38 @@ public class view {
                     mainScreen();
                     int choice = controller.getChoice();
                     switch (choice) {
+                        //选项1展示诊所名字列表
                         case 1:
                             brancheLiTitle();
                             ArrayList<Branches> bList = controller.getBranceList();
                             brList(bList);
-                            int brancheChoice = controller.getBranchesChoice();
-                            Branches b = controller.getBrancheByChoice(brancheChoice);
-                            appMange(b);
-                            int choice2 = controller.getChoice();
+
+                            boolean flag3 = true;
+                            while(flag3) {
+                                int brancheChoice = controller.getBranchesChoice();
+                                Branches b = controller.getBrancheByChoice2(brancheChoice);
+                                if (b!=null){
+                                    appMange(b);
+                                    flag3 = false;
+                                }
+                            }
+
+                            int choice2 = controller.getChoice2();
                             switch (choice2){
                                 case 1:
                                     //这里给你插入 make appointment的方法
                                     break;
 
-                                case 0:
+                                case 0: // 返回主菜单
                                     break;
                             }
-
-
                             break;
 
                         case 2:
                             //这里留着给你插入 Manage Appointment的方法
                             break;
 
+                         //选项0 退出登录
                         case 0:
                             flag = false;
                             break;
@@ -119,21 +127,21 @@ public class view {
 
     //通过 打印出用户想要的那个诊所的详细信息
     private static void appMange(Branches b){
-        System.out.println("================================================");
-        System.out.println("             Appointment Mangement             ");
-        System.out.println("================================================");
-        System.out.println("        Detail of(brance name)        ");
-        System.out.println("");
-        System.out.println("Brance name:"+b.getName());
-        System.out.println("Postcode:"+b.getPostcode());
-        System.out.println("OpeningHour:"+b.getOpningHour());
-        System.out.println("Phone:"+b.getPhone());
-        System.out.println("StreetName:"+b.getStreetName());
-        System.out.println("Subub:"+b.getSuburb());
-        System.out.println("");
-        System.out.println("1. Make Appointment");
-        System.out.println("");
-        System.out.println("0. Back");
+            System.out.println("================================================");
+            System.out.println("             Appointment Mangement             ");
+            System.out.println("================================================");
+            System.out.println("        Detail of(brance name)        ");
+            System.out.println("");
+            System.out.println("Brance name:" + b.getName());
+            System.out.println("Postcode:" + b.getPostcode());
+            System.out.println("OpeningHour:" + b.getOpningHour());
+            System.out.println("Phone:" + b.getPhone());
+            System.out.println("StreetName:" + b.getStreetName());
+            System.out.println("Subub:" + b.getSuburb());
+            System.out.println("");
+            System.out.println("1. Make Appointment");
+            System.out.println("");
+            System.out.println("0. Back");
     }
 
 

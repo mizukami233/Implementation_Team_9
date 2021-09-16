@@ -82,6 +82,17 @@ public class controller {
         return Integer.valueOf(choice);
     }
 
+    public static int getChoice2(){
+        System.out.println("Please make a choice: ");
+        Scanner sc = new Scanner(System.in);
+        String choice = sc.nextLine();
+        for(String regex = "^[0-1]+$"; !choice.matches(regex); choice = sc.next()) {
+            System.out.print("Input can only be number 0-2.");
+            System.out.print("Please input again: ");
+        }
+        return Integer.valueOf(choice);
+    }
+
 
     //通过调用文件读取方法然后获得诊所的list,并且把数据根据逗号处理好生成一个arraylist
     public static ArrayList<Branches> getBranceList(){
@@ -123,7 +134,7 @@ public class controller {
     }
 
     //验证用户选择诊所时 输入的是不是 在有效范围内
-    public static Branches getBrancheByChoice(int choice){
+    public static Branches getBrancheByChoice2(int choice){
         ArrayList<Branches> bList = getBranceList();
         if (bList.size()<=choice || choice < 0){
             return null;
