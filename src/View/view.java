@@ -128,9 +128,9 @@ public class view {
     //通过 打印出用户想要的那个诊所的详细信息
     private static void appMange(Branches b){
             System.out.println("================================================");
-            System.out.println("             Appointment Mangement             ");
+            System.out.println("             Appointment Mangement              ");
             System.out.println("================================================");
-            System.out.println("        Detail of(brance name)        ");
+            System.out.println("                Detail of Branch                ");
             System.out.println("");
             System.out.println("Brance name:" + b.getName());
             System.out.println("Postcode:" + b.getPostcode());
