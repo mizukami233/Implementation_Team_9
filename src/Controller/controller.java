@@ -1,10 +1,13 @@
 package Controller;
 
 import Model.Branches;
+import com.sun.deploy.util.StringUtils;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+
 
 public class controller {
 
@@ -110,6 +113,9 @@ public class controller {
         System.out.println("Please make a choice: ");
         Scanner sc=new Scanner(System.in);
         String branchesChoice = sc.nextLine();
+
+
+
         for(String regex = "-?[0-9]+(\\.[0-9]+)?"; !branchesChoice.matches(regex); branchesChoice = sc.next()) {
             System.out.print("Please enter correct number: ");
         }
