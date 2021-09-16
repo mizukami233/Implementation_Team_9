@@ -1,26 +1,51 @@
 package View;
 
 import Controller.controller;
+import Model.Branches;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class view {
 
     public static void main(String[] args) {
 
-        logInSc();
-        String email = askEmail();
-        String password = askPassword();
-        boolean isValid = controller.checkIsValid(email, password);
-        if(isValid == false) {
-            //验证失败 登陆失败 提醒失败 再次要求登陆账户密码
-            System.out.println(" -Incorrect account password!");
+        boolean flag = true;
+        while (flag) {
+            logInSc();
+            String email = askEmail();
+            String password = askPassword();
+            boolean isValid = controller.checkIsValid(email, password);
+            if (isValid == false) {
+                //验证失败 登陆失败 提醒失败 再次要求登陆账户密码
+                System.out.println(" -Incorrect account password!");
+            } else {
+                //如果正确进入主程序，提醒成功
+                flag = false;
+                System.out.println(" -Login Success!");
+            }
         }
-        else {
-            //如果正确进入主程序，提醒成功
-            System.out.println(" -Login Success!");
-            System.out.println();
-            mainScreen();
+
+        //邮箱密码正确后跳出登陆的循环进入主界面的循环
+        mainScreen();
+        int choice = controller.getChoice();
+        switch (choice){
+            case 1:
+                brancheLiTitle();
+                ArrayList<Branches> bList = controller.getBranceList();
+                //循环打印吧 诊所名字都打印出来
+                for(int i=0;i<bList.size();i++){
+                    System.out.println((i+1)+"."+bList.get(i).getName());
+                }
+                break;
+
+            case 2:
+                //这里留着给你插入 Manage Appointment的方法
+                break;
+
+            case 0:
+                //退出程序
+                break;
         }
 
 
@@ -54,6 +79,7 @@ public class view {
     }
 
 
+
     //打印显示主界面
     private static void mainScreen() {
         System.out.println("=========================================");
@@ -66,9 +92,20 @@ public class view {
         System.out.println();
         System.out.println("2. Manage Appointment");
         System.out.println();
-        System.out.println("3. Log out");
+        System.out.println("0. Log out");
         System.out.println();
-        System.out.println("Please make a choice: ");
     }
+
+    private static void brancheLiTitle(){
+        System.out.println("=========================================");
+        System.out.println("               Branches List             ");
+        System.out.println("=========================================");
+        System.out.println();
+    }
+
+
+    
+
+
 
 }

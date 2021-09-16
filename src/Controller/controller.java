@@ -1,5 +1,7 @@
 package Controller;
 
+import Model.Branches;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -65,4 +67,45 @@ public class controller {
         }
         return result;
     }
+
+    //验证用户输入的选项 只能输入0 1 2 返回int
+    public static int getChoice(){
+        System.out.println("Please make a choice: ");
+        Scanner sc = new Scanner(System.in);
+        String choice = sc.nextLine();
+        for(String regex = "^[0-2]+$"; !choice.matches(regex); choice = sc.next()) {
+            System.out.print("Input can only be number 0-2.");
+            System.out.print("Please input again: ");
+        }
+        return Integer.valueOf(choice);
+    }
+
+
+    public static ArrayList<Branches> getBranceList(){
+        ArrayList<Branches> branches = new ArrayList<Branches>();
+        try{
+            ArrayList<String> bList = readFileToString("branche.txt");
+            for (String str:bList){
+                str = str.trim();
+                String [] splitBList = str.split(",");
+                Branches br = new Branches();
+                br.setId(splitBList[0]);
+                br.setName(splitBList[1]);
+                br.setPostcode(splitBList[2]);
+                br.setOpningHour(splitBList[3]);
+                br.setPhone(splitBList[4]);
+                br.setStreetName(splitBList[5]);
+                br.setSuburb(splitBList[6]);
+                branches.add(br);
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return branches;
+
+    }
+
+
+
 }
