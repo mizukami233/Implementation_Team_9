@@ -106,6 +106,23 @@ public class controller {
 
     }
 
+    public static int getBranchesChoice(int numberBranch){
+        System.out.println("Please make a choice: ");
+        Scanner sc=new Scanner(System.in);
+        String branchesChoice = sc.nextLine();
+        for(String regex = "-?[0-9]+(\\.[0-9]+)?"; !branchesChoice.matches(regex); branchesChoice = sc.next()) {
+            System.out.print("Please enter correct number: ");
+        }
+
+        int bChoice = Integer.valueOf(branchesChoice);
+        while (bChoice <= 0 || bChoice > numberBranch){
+            System.out.print("Please enter correct number: ");
+            bChoice = sc.nextInt();
+        }
+        return bChoice;
+
+
+    }
 
 
 }

@@ -33,10 +33,11 @@ public class view {
             case 1:
                 brancheLiTitle();
                 ArrayList<Branches> bList = controller.getBranceList();
-                //循环打印吧 诊所名字都打印出来
-                for(int i=0;i<bList.size();i++){
-                    System.out.println((i+1)+"."+bList.get(i).getName());
-                }
+                int numberBranch = brList(bList);
+                int brancheChoice = controller.getBranchesChoice(numberBranch);
+
+
+
                 break;
 
             case 2:
@@ -96,6 +97,7 @@ public class view {
         System.out.println();
     }
 
+    //branches 界面的标题
     private static void brancheLiTitle(){
         System.out.println("=========================================");
         System.out.println("               Branches List             ");
@@ -104,7 +106,16 @@ public class view {
     }
 
 
-    
+    //循环 打印出所有诊所的名字 并且返回数量 可以用来检测用户一会儿的选择
+    private static int brList(ArrayList<Branches> bList) {
+        int i = 0;
+        while (i < bList.size()) {
+            System.out.println((i + 1) + "." + bList.get(i).getName());
+            i++;
+        }
+        return i;
+    }
+
 
 
 
