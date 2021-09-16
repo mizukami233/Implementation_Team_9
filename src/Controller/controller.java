@@ -1,7 +1,6 @@
 package Controller;
 
 import Model.Branches;
-import com.sun.deploy.util.StringUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -84,6 +83,7 @@ public class controller {
     }
 
 
+    //通过调用文件读取方法然后获得诊所的list,并且把数据根据逗号处理好生成一个arraylist
     public static ArrayList<Branches> getBranceList(){
         ArrayList<Branches> branches = new ArrayList<Branches>();
         try{
@@ -109,16 +109,26 @@ public class controller {
 
     }
 
-    public static int getBranchesChoice(int numberBranch){
+
+    //验证用户选择诊所时 输入的选项是不是数字
+    public static int getBranchesChoice(){
         System.out.println("Please make a choice: ");
         Scanner sc=new Scanner(System.in);
         String branchesChoice = sc.nextLine();
-        for(String regex = "^[0-2]+$"; !branchesChoice.matches(regex); branchesChoice = sc.next()) {
+        for(String regex = "^[0-9]+$"; !branchesChoice.matches(regex); branchesChoice = sc.next()) {
             System.out.print("Please enter correct number: ");
         }
-
         return Integer.valueOf(branchesChoice);
 
+    }
+
+    //验证用户选择诊所时 输入的是不是 在有效范围内
+    public static Branches getBrancheByChoice(int choice){
+        ArrayList<Branches> bList = getBranceList();
+        if (bList.size()<=choice || choice < 0){
+            return null;
+        }
+        return bList.get(choice-1);
     }
 
 
