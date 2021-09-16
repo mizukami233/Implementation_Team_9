@@ -1,19 +1,19 @@
 package Model;
 
 public class Branches {
-    private String id;
+    private int id;
     private String name;
-    private String postcode;
+    private int postcode;
     private String opningHour;
-    private String phone;
+    private int phone;
     private String streetName;
     private String suburb;
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -25,11 +25,11 @@ public class Branches {
         this.name = name;
     }
 
-    public String getPostcode() {
+    public int getPostcode() {
         return postcode;
     }
 
-    public void setPostcode(String postcode) {
+    public void setPostcode(int postcode) {
         this.postcode = postcode;
     }
 
@@ -41,11 +41,11 @@ public class Branches {
         this.opningHour = opningHour;
     }
 
-    public String getPhone() {
+    public int getPhone() {
         return phone;
     }
 
-    public void setPhone(String phone) {
+    public void setPhone(int phone) {
         this.phone = phone;
     }
 
