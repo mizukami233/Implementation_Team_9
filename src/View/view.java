@@ -134,7 +134,7 @@ public class view {
             System.out.println("");
             System.out.println("Brance name:" + b.getName());
             System.out.println("Postcode:" + b.getPostcode());
-            System.out.println("OpeningHour:" + b.getOpningHour());
+            System.out.println("OpeningHour:" + b.getOpeningHour());
             System.out.println("Phone:" + b.getPhone());
             System.out.println("StreetName:" + b.getStreetName());
             System.out.println("Subub:" + b.getSuburb());

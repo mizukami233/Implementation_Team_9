@@ -4,7 +4,7 @@ public class Branches {
     private int id;
     private String name;
     private int postcode;
-    private String opningHour;
+    private String openingHour;
     private int phone;
     private String streetName;
     private String suburb;
@@ -33,12 +33,12 @@ public class Branches {
         this.postcode = postcode;
     }
 
-    public String getOpningHour() {
-        return opningHour;
+    public String getOpeningHour() {
+        return openingHour;
     }
 
-    public void setOpningHour(String opningHour) {
-        this.opningHour = opningHour;
+    public void setOpeningHour(String openingHour) {
+        this.openingHour = openingHour;
     }
 
     public int getPhone() {

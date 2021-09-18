@@ -106,7 +106,7 @@ public class controller {
                 br.setId(Integer.parseInt(splitBList[0]));
                 br.setName(splitBList[1]);
                 br.setPostcode(Integer.parseInt(splitBList[2]));
-                br.setOpningHour(splitBList[3]);
+                br.setOpeningHour(splitBList[3]);
                 br.setPhone(Integer.parseInt(splitBList[4]));
                 br.setStreetName(splitBList[5]);
                 br.setSuburb(splitBList[6]);
