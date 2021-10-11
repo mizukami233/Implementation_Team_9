@@ -9,6 +9,20 @@ public class Branches {
     private String streetName;
     private String suburb;
 
+    public Branches(int id, String name, int postcode, String openingHour, int phone, String streetName, String suburb) {
+        this.id = id;
+        this.name = name;
+        this.postcode = postcode;
+        this.openingHour = openingHour;
+        this.phone = phone;
+        this.streetName = streetName;
+        this.suburb = suburb;
+    }
+
+    public Branches() {
+
+    }
+
     public int getId() {
         return id;
     }

@@ -1,3 +1,3 @@
-001,Elizabeth Clinic,3032,8:00-15:00,0403123456,Elizabeth Street,Bundoora
-002,Century Clinic,3051,8:00-15:00,0403123457,King Street,Parkville
-003,Life Care Clinic,3083,8:00-15:00,0403123458,Sanctuary Street,Box Hill
+1,Elizabeth Clinic,3032,8:00-15:00,0403123456,Elizabeth Street,Bundoora
+2,Century Clinic,3051,8:00-15:00,0403123457,King Street,Parkville
+3,Life Care Clinic,3083,8:00-15:00,0403123458,Sanctuary Street,Box Hill
