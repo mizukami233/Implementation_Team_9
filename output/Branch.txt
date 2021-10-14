@@ -1,0 +1,4 @@
+int id, String name, int postcode, String openingHour, int phone, String streetName, String suburb
+1,mo,123,8:00,123456,VIC,V
+2,na,456,8:00,123456,VIC,V
+3,sh,789,8:00,123456,VIC,V
