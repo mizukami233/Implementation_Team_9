@@ -1,33 +1,33 @@
 package Model;
 
-import java.sql.Time;
 import java.util.Date;
 
 //AppId,ReasonId,AppDateTime,PatId,BranchId,GpId
 public class Appointment {
     private int appId;
-    private int reasonId;
     private int patId;
     private int branchId;
     private int gpId;
+    private int reasonId;
     private Date appDate;
     private String appBeginTime;
     private String appEndTime;
+    private Date checkInTime;
+    private Date appTime;
 
     public Appointment(){
 
     }
 
-    public Appointment(int appId, int reasonId, int patId, int branchId, int gpId, Date appDate, String appBeginTime,String appEndTime) {
+    public Appointment(int appId, int patId, int branchId, int gpId, int reasonId, Date appDate, String appBeginTime, String appEndTime) {
         this.appId = appId;
-        this.reasonId = reasonId;
         this.patId = patId;
         this.branchId = branchId;
         this.gpId = gpId;
+        this.reasonId = reasonId;
         this.appDate = appDate;
         this.appBeginTime = appBeginTime;
         this.appEndTime = appEndTime;
-
     }
 
     public int getAppId() {
@@ -82,8 +82,8 @@ public class Appointment {
         return appBeginTime;
     }
 
-    public void setAppBeginTime(String appBeginTime) {
-        this.appBeginTime = appBeginTime;
+    public void setAppBeginTime(String date) {
+        this.appBeginTime = date;
     }
 
     public String getAppEndTime() {
@@ -92,6 +92,22 @@ public class Appointment {
 
     public void setAppEndTime(String appEndTime) {
         this.appEndTime = appEndTime;
+    }
+
+    public Date getCheckInTime() {
+        return checkInTime;
+    }
+
+    public void setCheckInTime(Date checkInTime) {
+        this.checkInTime = checkInTime;
+    }
+
+    public Date getAppTime() {
+        return appTime;
+    }
+
+    public void setAppTime(Date appTime) {
+        this.appTime = appTime;
     }
 }
 

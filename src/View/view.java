@@ -4,10 +4,12 @@ import Controller.*;
 import Model.Appointment;
 import Model.Branches;
 import Model.Gp;
+import Model.PatientQueue;
 import Model.Spare;
 
 import javax.swing.text.BoxView;
 import javax.swing.text.View;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
@@ -23,6 +25,7 @@ public class view {
     private static BranchDataBase branch;
     private static GpDataBase gp;
     private static Appointment oneAppointment;
+    private static PatientQueue patientQueue;
 
     public view() {
         appointment = new Appointmentdb();
@@ -31,6 +34,7 @@ public class view {
         branchGp = new BranchGpDataBase();
         gp = new GpDataBase();
         oneAppointment = new Appointment();
+        patientQueue = new PatientQueue(null, null);
     }
 
     public static void main(String[] args) {
@@ -43,21 +47,24 @@ public class view {
             String password = askPassword();
             boolean isValid = controller.checkIsValid(email, password);
             if (isValid == false) {
-                //验证失败 登陆失败 提醒失败 再次要求登陆账户密码
+                //Verification failed. Login failed, reminding failed,
+                // login account password is required again.
                 System.out.println(" -Incorrect account password!");
             } else {
-                //如果正确进入主程序，提醒成功
+                //If you enter the main program correctly, the reminder is successful
                 System.out.println(" -Login Success!");
 
 
-                //邮箱密码正确后跳出登陆的循环进入主界面的循环
+                //After the email password is correct,
+                // it jumps out of the login cycle and enters the main interface cycle
                 boolean flag = true;
                 while (flag) {
                     mainScreen();
                     int choice = controller.getChoice();
                     switch (choice) {
-                        //选项1展示诊所名字列表
+                        //Option 1 shows a list of clinic names
                         case 1:
+                            brancheLiTitle();
                             ArrayList<Branches> bList = controller.getBranchesList();
                             ArrayList<Branches> sList = controller.sortBranchesList(bList);
                             brList(sList);
@@ -74,7 +81,6 @@ public class view {
                                     oneAppointment.setBranchId(c);
                                 }
                             }
-
 
                             int choice2 = controller.getChoice2();
                             switch (choice2) {
@@ -101,7 +107,7 @@ public class view {
 
                                     break;
 
-                                case 0: // 返回主菜单
+                                case 0: // Back to main menu
                                     break;
                             }
 
@@ -110,18 +116,18 @@ public class view {
 
 
                         case 2:
-                            //这里留着给你插入 Manage Appointment的方法
+                            //Method of Manage Appointment
                             appM();
                             int managechoice2 = controller.getChoice2();
                             switch (managechoice2) {
                                 case 1:
-                                    generate();
+                                    generate();//generate function
                                     int managechoic3 = controller.getChoice2();
                                     if (managechoic3 == 0) {
                                         break;
                                     }
 
-                                case 0: // 返回主菜单
+                                case 0: // Back to main menu
                                     break;
                             }
                             break;
@@ -135,27 +141,80 @@ public class view {
                                 int input = sc.nextInt();
                                 if(input == 1){
                                     System.out.println("We auto asset you to a GP who has least booking");
-                                    System.out.println("This is the GP's detail: 100,Peter,spare,123456,iii");
+                                    System.out.println("This is the GP's detail: 100,Peter,spare,04037022436,General");
                                     appointment.writeRandomGp();
-                                    System.out.println("   预约成功   ");
+                                    System.out.println("   Appointment successful    ");
+                                    break;
                                 }
                                 else if(input == 0){
                                     break;
                                 }
-                                else if (input != 1 || input != 0){
+                                else if (input != 1 && input != 0){
                                     System.out.println("you can only choose 0 or 1");
                                     break;
                                 }
                             }
                             catch (Exception e){
-                                System.out.println("you can only choose 0 or 1");
+                                System.out.println("Error, Please check your spare file");
                                 break;
                             }
 
 
+                        case 4:
+                            Date checkinTime = null;
+                            Scanner sc = new Scanner(System.in);
+                            int appid;
+                            while (true) {
+                                try {
+                                    System.out.println("Please input your appointment id:");
+                                    appid = Integer.parseInt(sc.nextLine());
+                                    break;
+                                }
+                                catch (Exception e){
+                                    System.out.println("you can only input integer");
+                                }
+                            }
 
+                            while (true) {
+                                try {
+                                    System.out.println("If you want to check in, please input the time now (yyyy/MM/dd HH:mm) e.g.(2021/09/23 12:41). Notice that you can only check in 10 minutes before the appointment time");
+                                    String checkin = sc.nextLine();
+                                    checkinTime = new SimpleDateFormat("yyyy/MM/dd HH:mm").parse(checkin);
+                                    break;
+                                }
+                                catch (Exception e){
+                                    System.out.println("Wrong time format! Please input again!");
+                                }
+                            }
+                            // System.out.println("#######");
+                            // for (Appointment appointment : appointment.getAppointments()) {
+                            //     System.out.println(appointment.getAppId());
+                            // }
+                            ArrayList<Appointment> appointmentCopy = (ArrayList<Appointment>) appointment.getAppointments().clone();
+                            patientQueue = new PatientQueue(appointmentCopy, checkinTime);
+                            int isCheckin = controller.isCheckinTime(appid, checkinTime, appointment.getAppointments(), patientQueue);
 
-                            //选项0 退出登录
+                            if (isCheckin == 0) {
+                                System.out.println("Sorry. We cannot find this appointment record.");
+                                continue;
+                            } else if (isCheckin == 1) {
+                                System.out.println("More than 10 minutes before the appointment time. Please wait.");
+                                continue;
+                            } else {
+                                System.out.println("Check in Success! You can press 1 to see how many people are in front of the queue or press 0 to back");
+                                int input = sc.nextInt();
+                                if(input == 1){
+                                    System.out.println("There are " + String.valueOf(patientQueue.countFront(appid)) + " people in front of you");
+                                    break;
+                                } else if(input == 0){
+                                    break;
+                                } else {
+                                    System.out.println("you can only choose 0 or 1");
+                                    break;
+                                }
+                            }
+
+                        //sign out
                         case 0:
                             flag = false;
                             break;
@@ -168,27 +227,26 @@ public class view {
 
     private static void choiceRightGpid(HashSet<Integer> gpIds){
         while(true){
-            // 选择gpid
+            // choose gpId
             int choice3 = controller.getChoice3();
-            // 如果选择对了
             if(gpIds.contains(choice3)){
 
                 while (true){
-                    // 选择预约日期
-                    //   1. 输入0  date = null
-                    //   2. 一种输入日期  date = 周几
-                    System.out.println(" 请输入日期 如果你输入0 将返回上一层选择gp    ");
+                    // Choose appointment date
+                    // 1. Enter 0 date = null
+                    // 2. An input date date = day of the week
+                    System.out.println(" Please enter the date. If you enter 0, you will return to the previous level.   ");
                     Date date = returnAppDate();
                     if (date == null){
                         break;
                     }
                     DayOfWeek week = setAppointmentDate(date);
-                    // 预约日期 和 上班日期作比较(周几）
+                    // Compare the appointment date with the work date (day of the week)
                     boolean okDate = branchGp.findGpWorkingDate(week, choice3);
                     oneAppointment.setAppDate(date);
-                    // 如果比较结果为true 选择预约时间段
+                    // If the comparison result is true, select the appointment time period
                     if(okDate == true) {
-                        // 开始选择预约时间
+                        // Start choosing appointment time
                         LocalTime appBeginTime = appBegin();
                         if (appBeginTime == null){
                             break;
@@ -196,25 +254,19 @@ public class view {
                         int userReason = userChooseReasonId();
                         LocalTime appEndTime = appEnd(appBeginTime,userReason);
                         boolean okTime = appointment.findGpTimeFrames(date, appBeginTime, appEndTime, choice3);
-                        // true 显示预约成功，不然就跳出程序
+                        // true Show that the appointment is successful, otherwise it will jump out of the program
                         if (okTime == true){
                             oneAppointment.setAppBeginTime(appBeginTime.format(DateTimeFormatter.ofPattern("HH:mm")));
                             oneAppointment.setAppEndTime(appEndTime.format(DateTimeFormatter.ofPattern("HH:mm")));
                             oneAppointment.setGpId(choice3);
                             appointment.add(oneAppointment);
                             appointment.writeAppointmentData(oneAppointment, userReason); //txt 添加
-                            System.out.println("   预约成功   ");
+                            System.out.println("   Appointment successful   ");
                         }
                         else {
-                            System.out.println("   预约失败   ");
+                            System.out.println("    Appointment failed    ");
                             break;
                         }
-
-                        // 输入
-
-                        // 比较
-
-                        // 结果
                         break;
                     }
                 }
@@ -228,7 +280,8 @@ public class view {
 
 
 
-    private static void choiceAvaTime(){     //选了GP之后需要选合适的预约星期几，不然返回上一层重新选择gp
+    private static void choiceAvaTime(){    //After choosing the GP, you need to choose the appropriate day of the appointment,
+        // otherwise you will return to the previous level and re-select gp
         System.out.println("Please choose GP");
         String back = "-1";
         while (back.equals("-1")){
@@ -239,7 +292,7 @@ public class view {
 
     }
 
-    //打印登录界面
+    //Print login interface
     private static void logInSc() {
         System.out.println("=========================================");
         System.out.println("     Monash Patient Management System     ");
@@ -248,7 +301,7 @@ public class view {
         System.out.println("      ");
     }
 
-    //打印请求输入邮箱
+    //Print request input email
     private static String askEmail() {
         System.out.println("   -Enter your Email:   ");
         Scanner sc = new Scanner(System.in);
@@ -256,7 +309,7 @@ public class view {
         return email;
     }
 
-    //打印请求输入密码
+    //Print request to enter password
     private static String askPassword() {
         System.out.println("      ");
         System.out.println("   -Enter your Password:   ");
@@ -266,7 +319,7 @@ public class view {
     }
 
 
-    //打印显示主界面
+    //Print display main interface
     private static void mainScreen() {
         System.out.println("=========================================");
         System.out.println("          Appointment Management         ");
@@ -280,11 +333,13 @@ public class view {
         System.out.println();
         System.out.println("3. choose a random GP");
         System.out.println();
+        System.out.println("4. Check in");
+        System.out.println();
         System.out.println("0. Log out");
         System.out.println();
     }
 
-    //branches 界面的标题
+    //The title of the branches interface
     private static void brancheLiTitle() {
         System.out.println("=========================================");
         System.out.println("               Branches List             ");
@@ -302,7 +357,7 @@ public class view {
         System.out.println();
     }
 
-    //通过 打印出用户想要的那个诊所的详细信息
+    //By printing out the detailed information of the clinic that the user wants
     private static void appMange(Branches b) {
         System.out.println("================================================");
         System.out.println("             Appointment Mangement              ");
@@ -322,7 +377,8 @@ public class view {
     }
 
 
-    //循环 打印出所有诊所的名字 并且返回数量 可以用来检测用户一会儿的选择
+    //Loop, print out the names of all clinics and return the number,
+    // which can be used to check the user’s choices for a while
     private static void brList(ArrayList<Branches> bList) {
         int i = 0;
         while (i < bList.size()) {
@@ -368,27 +424,31 @@ public class view {
 
     public static String askStartDate(){
         System.out.println("Please enter the start date (E.g 2021/01/01) : ");
+        // ask for input
         Scanner scanner = new Scanner(System.in);
+        //get input data
         String startDateString = scanner.nextLine();
-        for(boolean i = isDate(startDateString); i == false;){
+        for(boolean i = isDate(startDateString); i == false;){// if data is not valid, always execute loop
             System.out.println(isDate(startDateString));
             System.out.println("Your date format is wrong");
-            System.out.println("Please try again: ");
+            System.out.println("Please try again: ");//ask to input again
             startDateString = scanner.nextLine();
-            i = isDate(startDateString);
+            i = isDate(startDateString);//check if date is valid
         }
         return startDateString;
     }
     public static String askEndDate(){
         System.out.println("Please enter the end date (E.g 2021/01/01) : ");
+        // ask for input
         Scanner scanner2 = new Scanner(System.in);
+        //get input data
         String endDateString = scanner2.nextLine();
-        for(boolean i = isDate(endDateString); i == false;){
+        for(boolean i = isDate(endDateString); i == false;){ // if data is not valid, always execute loop
             System.out.println(isDate(endDateString));
             System.out.println("Your date format is wrong");
-            System.out.println("Please try again: ");
+            System.out.println("Please try again: ");//ask to input again
             endDateString = scanner2.nextLine();
-            i = isDate(endDateString);
+            i = isDate(endDateString);//check if input date is valid
         }
         return endDateString;
     }
@@ -396,20 +456,27 @@ public class view {
 
     public static void generate() {
         start();
-        System.out.println("Please enter the start date (E.g 2021/01/01) : ");
-        Scanner scanner = new Scanner(System.in);
-        String startDateString = scanner.nextLine();
+        //ask for input first
+        String start = askStartDate();
+        String end = askEndDate();
 
-        System.out.println("Please enter the end date (E.g 2021/01/01) : ");
-        Scanner scanner2 = new Scanner(System.in);
-        String endDateString = scanner2.nextLine();
         try {
-            Date startDate = new SimpleDateFormat("yyyy/MM/dd").parse(startDateString);
-            Date endDate = new SimpleDateFormat("yyyy/MM/dd").parse(endDateString);
-            int[] results = controller.generateReason(startDate, endDate);
-            int sum = results[0] + results[1] + results[2];
-            for (int i = 0; i < reason.getReasons().size(); i++) {
-                System.out.println(reason.getReasons().get(i).getType() + ": " + (results[i] * 1.0) / sum * 100 + "%");
+            //transform string to date
+            Date startDate = new SimpleDateFormat("yyyy/MM/dd").parse(start);
+            Date endDate = new SimpleDateFormat("yyyy/MM/dd").parse(end);
+            //get the number of each type of reason
+            int[] results = appointment.generateReason(startDate,endDate);
+            int sum = results[0]+results[1]+results[2];
+            for(int i =0;i< reason.getReasons().size();i++){
+                DecimalFormat df = new DecimalFormat("#.##");// get 2 decimal
+                double num;
+                if(results[i]<=0||sum == 0)//if there is no appointment, the result is 0
+                {num = 0;}
+                else
+                //calculate in double format and transform to percentage format
+                {num= (results[i]*1.0)/sum*100.0;}
+                //print result
+                System.out.println(reason.getReasons().get(i).getType() + ": " + df.format(num)+"%");
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -422,19 +489,16 @@ public class view {
         return new java.sql.Date(dateToConvert.getTime()).toLocalDate();
     }
 
-    private static DayOfWeek setAppointmentDate(Date date) {  //返回周几
+    private static DayOfWeek setAppointmentDate(Date date) {  //return day of week
         //Date date = returnAppDate();
         DayOfWeek tranDate;
-        LocalDate localDate = convertToLocalDateViaSqlDate(date); //date to localdate
-        //System.out.println(tranDate);
-        tranDate = localDate.getDayOfWeek();
-        System.out.println(tranDate);
+            LocalDate localDate = convertToLocalDateViaSqlDate(date); //date to localdate
+            tranDate = localDate.getDayOfWeek();
         return tranDate;
     }
 
-    //返回2021-01-01
 
-    private static Date returnAppDate() {  //返回2021-01-01
+    private static Date returnAppDate() {  //return 2021-01-01
 
         Date date = null;
         System.out.println("Please input a date (E.g 2021-01-01) : ");
@@ -446,7 +510,6 @@ public class view {
             }
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             date = sdf.parse(appointmentDate);
-            System.out.println(date);
 //            LocalDate localDate = LocalDate.parse(appointmentDate);
 //            //System.out.println(localDate.getDayOfWeek());
 //            date = localDate.getDayOfWeek();
@@ -456,7 +519,7 @@ public class view {
         return date;
     }
 
-    private static LocalTime appBegin() {  //设置app开始时间
+    private static LocalTime appBegin() {  //Set app start time
         LocalTime beginTime = null;
         try {
             System.out.println("please input your booking time(HH:mm) e.g.(09:30)");
@@ -470,31 +533,24 @@ public class view {
         return beginTime;
     }
 
-//    private static LocalTime appBeginToLocalTime(){ //开始时间转变成localtime
-//        String tranTime = appBegin();
-//        LocalTime beginTime;
-//        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-//        beginTime = LocalTime.parse(tranTime, dateTimeFormatter);
-//        return beginTime;
-//    }
 
-    private static LocalTime appEnd(LocalTime beginTime, int userSelection){ //结束时间
+    private static LocalTime appEnd(LocalTime beginTime, int userSelection){ //End Time
         int min;
         if (userSelection == 1)
-            min = 5;
-        else if (userSelection == 2)
-            min = 10;
-        else
             min = 15;
+        else if (userSelection == 2)
+            min = 15;
+        else
+            min = 30;
         LocalTime endTime = beginTime.plusMinutes(min);
         return endTime;
     }
 
     private static int userChooseReasonId(){
         System.out.println("please select appointment type");
-        System.out.println("1,5min");
-        System.out.println("2,10min");
-        System.out.println("3,15min");
+        System.out.println("1,Standard Consultation Face to Face (15 minutes)");
+        System.out.println("2,Telehealth (Video / Phone consult) (15 minutes)");
+        System.out.println("3,Long consultation face to face (30 minutes)");
         int userSelection = 0;
         while (userSelection <= 0 || userSelection > 3) {
             Scanner sca = new Scanner(System.in);
@@ -503,20 +559,18 @@ public class view {
         return userSelection;
     }
 
-    public static boolean isDate(String str){
+    public static boolean isDate(String str){//check if the input date is valid
         boolean result = true;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");//set date format
         try{
             format.setLenient(false);
-            format.parse(str);
+            format.parse(str);//transform from string to date
 
         }catch(Exception e){
             result = false;
         }
         return result;
     }
-
-
 
 }
 

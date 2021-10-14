@@ -1,30 +1,27 @@
 package Controller;
 
-import Model.BranchGp;
 import Model.Gp;
-import connector.DbConnector;
-import netscape.javascript.JSObject;
+import connector.ReadFile;
 
 import java.util.ArrayList;
 
 public class GpDataBase {
     private ArrayList<Gp> gp;
-    private DbConnector dbConnector;
+    private ReadFile readfile;
 
     public GpDataBase(){
         gp = new ArrayList<>();
-        dbConnector = new DbConnector();
+        readfile = new ReadFile();
     }
 
-    public GpDataBase(ArrayList<Gp> gp, DbConnector dbConnector) {
+    public GpDataBase(ArrayList<Gp> gp, ReadFile readfile) {
         this.gp = gp;
-        this.dbConnector = dbConnector;
+        this.readfile = readfile;
     }
 
     public void showGp(){  //get the data from the file
-        dbConnector.setFileName("Gp.txt");
-        dbConnector.setHasHeader(false);
-        ArrayList<String> lines = dbConnector.readDataFromFile();
+        readfile.setFileName("Gp.txt");
+        ArrayList<String> lines = readfile.readDataFromFile();
         for(String line:lines){
             String[] lineArray = line.split(",");
             //int gpId, String firstName, String lastName, String phone, String expert
@@ -72,11 +69,11 @@ public class GpDataBase {
         this.gp = gp;
     }
 
-    public DbConnector getDbConnector() {
-        return dbConnector;
+    public ReadFile getDbConnector() {
+        return readfile;
     }
 
-    public void setDbConnector(DbConnector dbConnector) {
-        this.dbConnector = dbConnector;
+    public void setDbConnector(ReadFile readfile) {
+        this.readfile = readfile;
     }
 }

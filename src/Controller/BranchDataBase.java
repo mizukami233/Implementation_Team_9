@@ -1,28 +1,27 @@
 package Controller;
 
 import Model.Branches;
-import connector.DbConnector;
+import connector.ReadFile;
+
 import java.util.*;
-import java.lang.Math;
 
 public class BranchDataBase {
     private ArrayList<Branches> branch;
-    private DbConnector dbConnector;
+    private ReadFile readfile;
 
     public BranchDataBase(){
         branch = new ArrayList<>();
-        dbConnector = new DbConnector();
+        readfile = new ReadFile();
     }
 
-    public BranchDataBase(ArrayList<Branches> branch, DbConnector dbConnector) {
+    public BranchDataBase(ArrayList<Branches> branch, ReadFile readfile) {
         this.branch = branch;
-        this.dbConnector = dbConnector;
+        this.readfile = readfile;
     }
 
     public void showBranch(){ //get the data from the file
-        dbConnector.setFileName("branche.txt");
-        dbConnector.setHasHeader(false);
-        ArrayList<String> lines = dbConnector.readDataFromFile();
+        readfile.setFileName("branche.txt");
+        ArrayList<String> lines = readfile.readDataFromFile();
         for(String line:lines){
             String[] lineArray = line.split(",");
             //brid;name;postcode;openingHour;phone;streetName;suburb
@@ -40,12 +39,12 @@ public class BranchDataBase {
         this.branch = branch;
     }
 
-    public DbConnector getDbConnector() {
-        return dbConnector;
+    public ReadFile getDbConnector() {
+        return readfile;
     }
 
-    public void setDbConnector(DbConnector dbConnector) {
-        this.dbConnector = dbConnector;
+    public void setDbConnector(ReadFile readfile) {
+        this.readfile = readfile;
     }
 
 }

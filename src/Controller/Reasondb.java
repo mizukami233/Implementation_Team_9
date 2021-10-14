@@ -1,17 +1,17 @@
 package Controller;
 
 import Model.Reason;
-import connector.DbConnector;
+import connector.ReadFile;
 
 import java.util.ArrayList;
 
 public class Reasondb {
     private ArrayList<Reason> reasons;
-    private DbConnector dbConnector;
+    private ReadFile readfile;
 
     public Reasondb() {
         reasons = new ArrayList<>();
-        dbConnector = new DbConnector();
+        readfile = new ReadFile();
     }
 
 
@@ -23,20 +23,21 @@ public class Reasondb {
         this.reasons = reasons;
     }
 
-    public DbConnector getDbConnector() {
-        return dbConnector;
+    public ReadFile getDbConnector() {
+        return readfile;
     }
 
-    public void setDbConnector(DbConnector dbConnector) {
-        this.dbConnector = dbConnector;
+    public void setDbConnector(ReadFile readfile) {
+        this.readfile = readfile;
     }
 
     public void loadReason(){
-        dbConnector.setFileName("reason.txt");
-        dbConnector.setHasHeader(false);
-        ArrayList<String> lines = dbConnector.readDataFromFile();
+        readfile.setFileName("reason.txt");
+
+        ArrayList<String> lines = readfile.readDataFromFile();
         for(String line:lines){
             String[] lineArray = line.split(",");
+            //ReasonId, Type, description
             Reason reason = new Reason(Integer.parseInt(lineArray[0]),lineArray[1],lineArray[2]);
             reasons.add(reason);
         }

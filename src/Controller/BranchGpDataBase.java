@@ -1,9 +1,7 @@
 package Controller;
 
-import Model.Appointment;
 import Model.BranchGp;
-import Model.Branches;
-import connector.DbConnector;
+import connector.ReadFile;
 
 import java.time.DayOfWeek;
 import java.util.ArrayList;
@@ -11,16 +9,16 @@ import java.util.HashSet;
 
 public class BranchGpDataBase {
     private ArrayList<BranchGp> branchGp;
-    private DbConnector dbConnector;
+    private ReadFile readfile;
 
     public BranchGpDataBase(){
         branchGp = new ArrayList<>();
-        dbConnector = new DbConnector();
+        readfile = new ReadFile();
     }
 
-    public BranchGpDataBase(ArrayList<BranchGp> branchGp, DbConnector dbConnector) {
+    public BranchGpDataBase(ArrayList<BranchGp> branchGp, ReadFile readfile) {
         this.branchGp = branchGp;
-        this.dbConnector = dbConnector;
+        this.readfile = readfile;
     }
 
     public HashSet<Integer> useBranchFindGp(int branchId){ //use hashset to avoid repeat value
@@ -85,9 +83,8 @@ public class BranchGpDataBase {
     }
 
     public void showBranchGp(){ //get the data from the file
-        dbConnector.setFileName("BranchGp.txt");
-        dbConnector.setHasHeader(false);
-        ArrayList<String> lines = dbConnector.readDataFromFile();
+        readfile.setFileName("BranchGp.txt");
+        ArrayList<String> lines = readfile.readDataFromFile();
         for(String line:lines){
             String[] lineArray = line.split(",");
             //int bgId, int gpId, int branchId, String workingTime, int workingBegin, int workingEnd
@@ -120,11 +117,11 @@ public class BranchGpDataBase {
         this.branchGp = branchGp;
     }
 
-    public DbConnector getDbConnector() {
-        return dbConnector;
+    public ReadFile getDbConnector() {
+        return readfile;
     }
 
-    public void setDbConnector(DbConnector dbConnector) {
-        this.dbConnector = dbConnector;
+    public void setDbConnector(ReadFile readfile) {
+        this.readfile = readfile;
     }
 }

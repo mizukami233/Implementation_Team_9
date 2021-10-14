@@ -1,40 +1,38 @@
 package Controller;
 
 import Model.*;
-import connector.DbConnector;
+import connector.ReadFile;
 
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
-import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class controller {
     private static ArrayList<Appointment> appointments;
     private ArrayList<Reason> reasons;
-    private DbConnector dbConnector;
+    private ReadFile readfile;
 
     public controller(){
         appointments = new ArrayList<>();
         reasons = new ArrayList<>();
-        dbConnector = new DbConnector();
+        readfile = new ReadFile();
 
     }
 
-
-    public controller(ArrayList<Appointment> appointments, ArrayList<Reason> reasons,DbConnector dbConnector) {
-        this.appointments = appointments;
+    public controller(ArrayList<Appointment> appointments, ArrayList<Reason> reasons, ReadFile readfile) {
+        controller.appointments = appointments;
         this.reasons = reasons;
-        this.dbConnector = dbConnector;
+        this.readfile = readfile;
     }
     public ArrayList<Appointment> getAppointments() {
         return appointments;
     }
 
     public void setAppointments(ArrayList<Appointment> appointments) {
-        this.appointments = appointments;
+        controller.appointments = appointments;
     }
 
     public ArrayList<Reason> getReasons() {
@@ -45,12 +43,12 @@ public class controller {
         this.reasons = reasons;
     }
 
-    public DbConnector getDbConnector() {
-        return dbConnector;
+    public ReadFile getDbConnector() {
+        return readfile;
     }
 
-    public void setDbConnector(DbConnector dbConnector) {
-        this.dbConnector = dbConnector;
+    public void setDbConnector(ReadFile readfile) {
+        this.readfile = readfile;
     }
 
 
@@ -66,7 +64,7 @@ public class controller {
     }
 
 
-    // 调用读取文件的数据然后 验证邮箱密码正确与否，先验证admin然后验证pation
+    // Call the data of the read file and verify whether the mailbox password is correct or not, first verify admin and then verify pation
     public static boolean checkIsValid(String email, String password){
 
         boolean isValid = false;
@@ -95,8 +93,27 @@ public class controller {
         return isValid;
     }
 
+    public static int isCheckinTime(int appid, Date checkinTime, ArrayList<Appointment> appointments, PatientQueue patientQueue){
+        List<Appointment> result = null;
+        result = appointments.stream().filter(appointment -> appid == appointment.getAppId()).collect(Collectors.toList());
+        if (result.size() == 0){
+            return 0;
+        }
+        
+        int minutes = (int) ((result.get(0).getAppTime().getTime() - checkinTime.getTime()) / (1000 * 60)); 
+        if (minutes <= 10) {
+            result.get(0).setCheckInTime(checkinTime);
+            patientQueue.enQueue(result.get(0));
+            patientQueue.updateSeq(checkinTime);
+            return 2;
+        } else {
+            return 1;
+        }
+    }
 
-    // 文件读取方法，读取之后处理一下解码，不是空的啥的（就是先进行一下简单的通用处理）
+
+
+    // File reading method, after reading, process the decoding, is not empty (for simple general processing)
     public static ArrayList<String> readFileToString(String fileName){
         File inputFile = new File(fileName);
         ArrayList<String> result = new ArrayList<String>();
@@ -124,18 +141,19 @@ public class controller {
         return result;
     }
 
-    //验证用户输入的选项 只能输入0 1 2 返回int
+    //To verify the options entered by the user, can only enter 0 1 2 3 4 return int
     public static int getChoice(){
         System.out.println("Please make a choice: ");
         Scanner sc = new Scanner(System.in);
         String choice = sc.nextLine();
-        for(String regex = "^[0-3]+$"; !choice.matches(regex); choice = sc.next()) {
-            System.out.print("Input can only be number 0-3.");
+        for(String regex = "^[0-4]+$"; !choice.matches(regex); choice = sc.next()) {
+            System.out.print("Input can only be number 0-4.");
             System.out.print("Please input again: ");
         }
         return Integer.valueOf(choice);
     }
 
+    //To verify the options entered by the user
     public static int getChoice2(){
         System.out.println("Please make a choice: ");
         Scanner sc = new Scanner(System.in);
@@ -147,17 +165,31 @@ public class controller {
         return Integer.valueOf(choice);
     }
 
+    //To verify the entered by the user
     public static int getChoice3(){
         System.out.println("Please input a GP id to choice: ");
         Scanner sc = new Scanner(System.in);
         String choice = sc.nextLine();
-        for(String regex = "^[0-99]+$"; !choice.matches(regex); choice = sc.next()) {
+        for(String regex = "^(0?[1-9]|[1-9][0-9])+$"; !choice.matches(regex); choice = sc.next()) {
             System.out.println("Please input again: (you can't choose 100 GP because he is a spare GP)");
         }
         return Integer.valueOf(choice);
     }
 
-    //通过调用文件读取方法然后获得诊所的list,并且把数据根据逗号处理好生成一个arraylist
+    //To verify the options entered by the user
+    public static int getChoice4(){
+        System.out.println("Please make a choice: ");
+        Scanner sc = new Scanner(System.in);
+        String choice = sc.nextLine();
+        for(String regex = "^[0-1]+$"; !choice.matches(regex); choice = sc.next()) {
+            System.out.print("Input can only be number 0-1.");
+            System.out.print("Please input again: ");
+        }
+        return Integer.valueOf(choice);
+    }
+
+    //By calling the file reading method, the clinic's list is obtained,
+    //and the data is processed according to the comma to generate an arraylist.
     public static ArrayList<Branches> getBranchesList(){
         ArrayList<Branches> branches = new ArrayList<Branches>();
         try{
@@ -183,7 +215,6 @@ public class controller {
 
     }
 
-
     //Sort according to the name of the branches
     public static ArrayList<Branches> sortBranchesList(ArrayList<Branches> bList){
         Collections.sort(bList, new Comparator<Branches>() {
@@ -195,10 +226,7 @@ public class controller {
         return bList;
     }
 
-
-
-
-    //验证用户选择诊所时 输入的选项是不是数字
+    //Verify that the option entered when the user selects a clinic is a number
     public static int getBranchesChoice(){
         System.out.println("Please make a choice: ");
         Scanner sc=new Scanner(System.in);
@@ -210,7 +238,7 @@ public class controller {
 
     }
 
-    //验证用户选择诊所时 输入的是不是 在有效范围内
+    //Verify that what the user entered when choosing a clinic is within the valid range.
     public static Branches getBrancheByChoice2(int choice){
         ArrayList<Branches> bList = getBranchesList();
         if (bList.size()<choice || choice <= 0){
@@ -220,9 +248,8 @@ public class controller {
     }
 
     public void loadApp(){  //get the data from the file
-        dbConnector.setFileName("appointment.txt");
-        dbConnector.setHasHeader(false);
-        ArrayList<String> lines = dbConnector.readDataFromFile();
+        readfile.setFileName("appointment.txt");
+        ArrayList<String> lines = readfile.readDataFromFile();
         for(String line:lines){
             //1,1,1,1,1,2021/09/22,10:00
             String[] lineArray = line.split(",");
@@ -239,15 +266,30 @@ public class controller {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            appointments.add(appointment);
+            appointment.setAppBeginTime(lineArray[6]);
+            appointment.setAppEndTime(lineArray[7]);
+            try {
+                Date date = new SimpleDateFormat("yyyy/MM/dd HH:mm").parse(lineArray[5] + ' ' + lineArray[8]);
+                appointment.setCheckInTime(date);
+            } catch (Exception e) {
+                appointment.setCheckInTime(null);
+                // e.printStackTrace();
+            }
+            try {
+                Date date = new SimpleDateFormat("yyyy/MM/dd HH:mm").parse(lineArray[5] + ' ' + lineArray[6]);
 
+                appointment.setAppTime(date);
+            } catch (Exception e) {
+                appointment.setAppTime(null);
+                // e.printStackTrace();
+            }
+            appointments.add(appointment);
         }
     }
 
     public void loadReason(){
-        dbConnector.setFileName("reason.txt");
-        dbConnector.setHasHeader(false);
-        ArrayList<String> lines = dbConnector.readDataFromFile();
+        readfile.setFileName("reason.txt");
+        ArrayList<String> lines = readfile.readDataFromFile();
         for(String line:lines){
             String[] lineArray = line.split(",");
             Reason reason = new Reason(Integer.parseInt(lineArray[0]),lineArray[1],lineArray[2]);
@@ -279,54 +321,7 @@ public class controller {
         return new int[]{reason1Count,reason2Count,reason3Count};
     }
 
-//    public void readApp(){ //get the data from the file
-//        dbConnector.setFileName("appointment.txt");
-//        dbConnector.setHasHeader(false);
-//        ArrayList<String> lines = dbConnector.readDataFromFile();
-//        for(String line:lines){
-//            String[] lineArray = line.split(",");
-//            //int appId, int reasonId, int patId, int branchId, int gpId, Date appDate, String appBeginTime,String appEndTime
-//            appointments.add(new Appointment(Integer.parseInt(lineArray[0]),Integer.parseInt(lineArray[1]),
-//                    Integer.parseInt(lineArray[2]),Integer.parseInt(lineArray[3]),
-//                    Integer.parseInt(lineArray[4]),stringToDate(lineArray[5]) ,lineArray[6],lineArray[7]));
-//        }
-//    }
 
-//    public static boolean findGpTimeFrames(Date date, LocalTime beginTime, LocalTime endTime, int gId) {
-//        boolean gpEmpty = true;
-//        boolean gpNone = true;
-//        for (Appointment appointment: appointments) { //这个人没任何预约，不出现在预约表
-//            if (appointment.getGpId() == gId) {
-//                gpNone = false;
-//            }
-//        }
-//        if (!gpNone) { //这个人有预约，但是日期不冲突
-//            for (Appointment appointment : appointments) {
-//                if (appointment.getGpId() == gId && appointment.getAppDate().equals(date)) {
-//                    gpEmpty = false;
-//                }
-//            }
-//            if (!gpEmpty) {  //这个人有预约，但是日期冲突，所以才比对预约时间
-//                for (Appointment appointment : appointments) {
-//                    if (appointment.getGpId() == gId) { //医生有预约
-//                        if (appointment.getAppDate().equals(date)) {
-//                            //且当天预约时间不冲突
-//                            LocalTime appLocalStartTime = LocalTime.parse(appointment.getAppBeginTime());
-//                            LocalTime appLocalEndTime = LocalTime.parse(appointment.getAppEndTime());
-//                            if (appLocalEndTime.isBefore(beginTime) || appLocalStartTime.isAfter(endTime)) {
-//                                return true;
-//                            }
-//                        }
-//                    }
-//                }
-//                return false;
-//            } else {
-//                return true;
-//            }
-//        } else {
-//            return true;
-//        }
-//    }
 
     public Date stringToDate(String dateStr){
         try {
@@ -337,6 +332,4 @@ public class controller {
         }
         return null;
     }
-
-    //public void
 }
